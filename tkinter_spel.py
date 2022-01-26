@@ -9,6 +9,7 @@ img2 = PhotoImage(file = "media/duck.png")
 img = PhotoImage(file = "media/crosshairs.png")
 id = canv.create_image(200, 150, image=img)
 movespeed = 10
+score = 0
 
 x_pos = 0
 y_pos = 0
@@ -20,23 +21,27 @@ xHit = False
 yHit = False
 
 
-
+# Updates pos for crosshairs
 def updatePos():
     global x_pos
     global y_pos
     x_pos = (canv.coords(id)[0] - 3)
     y_pos = (canv.coords(id)[1] - 12)
+    # print("Debug: Updated pos")
 
+# Picks a new random pos for target
 def updateRandPos():
     global randPosX
     global randPosY
-    randPosX = random.randint(-43, 377)
-    randPosY = random.randint(18, 318)
+    randPosX = random.randint(17, 377)
+    randPosY = random.randint(8, 210)
+    # print("Debug: Updated randpos")
 
+# Moves target to updated pos
 def updateTarget():
-    canv.delete(target)
     updateRandPos()
-    return canv.create_image(randPosX + 5, randPosY + 15, image=img2)
+    canv.move(target, randPosX + 5, randPosY + 15)
+    # print("Debug: Updated target")
 
 
 updateRandPos()
@@ -62,6 +67,7 @@ def move_down(e):
 def shoot(e):
     global xHit
     global yHit
+    global score
 
     updatePos()
     
@@ -73,8 +79,10 @@ def shoot(e):
     if (xHit == True & yHit == True):
         shot = canv.create_oval(0, 10, 5, 15, fill="red")
         canv.move(shot, x_pos, y_pos)
+        
         print("hit")
-        target = updateTarget()
+        updateTarget()
+        score += 1 
         
         
     else:
@@ -84,12 +92,14 @@ def shoot(e):
     yHit = False
 
 def debug(e):
-    updateRandPos()
-    print("debug")
+    global x_pos
+    global y_pos
+    global randPosX
+    global randPosY
 
-
-
-
+    updatePos()
+    print(x_pos, y_pos)
+    print(randPosX, randPosY)
 
 
 
@@ -98,7 +108,7 @@ canv.bind_all("<Right>", move_right)
 canv.bind_all("<Up>", move_up)
 canv.bind_all("<Down>", move_down)
 canv.bind_all("<space>", shoot)
-canv.bind_all("<k>", debug)
+canv.bind_all("<8>", debug) 
 
 root.mainloop()
 
