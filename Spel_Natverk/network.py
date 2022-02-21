@@ -1,19 +1,28 @@
 import socket
+import pickle
 
 
 class Network:
-
     def __init__(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.host = "10.32.41.35" #IP you want to run server on
+        self.server = "10.32.41.35"
         self.port = 5555
-        self.addr = (self.host, self.port)
-        self.id = self.connect()
+        self.addr = (self.server, self.port)
+        self.p = self.connect()
+
+    def getP(self):
+        return self.p
 
     def connect(self):
-        self.client.connect(self.addr)
-        return self.client.recv(2048).decode()
+        try:
+            self.client.connect(self.addr)
+            return self.client.recv(2048).decode()
+        except:
+            pass
 
     def send(self, data):
-        #vetefan just nu
-        pass
+        try:
+            self.client.send(str.encode(data))
+            return pickle.loads(self.client.recv(2048*2))
+        except socket.error as err:
+            print(err)
