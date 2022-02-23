@@ -24,6 +24,9 @@ class Game:
     def connected(self):
         return self.p1Move and self.p2Move
 
+    def bothWent(self):
+        return self.p1Move and self.p2Move
+
     def win(self):
         player1 = self.move[0].upper()[0]
         player2 = self.move[1].upper()[0]

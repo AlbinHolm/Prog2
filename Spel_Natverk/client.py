@@ -89,11 +89,56 @@ def main():
 
     while run:
         clock.tick(60)
+        try:
+            game = n.send("get")
+        except:
+            run = False
+            print("Can not find game")
+            break
+        
+        if game.bothWent():
+            reDraw(win, game, player)
+            pygame.time.delay(500)
+            try:
+                game = n.send("reset")
+            except:
+                run = False
+                print("Can not find game")
+                break
+
+            font = pygame.font.SysFont("comicsans", 90)
+            if (game.win() == 1 and player == 1) or (game.win() == 0 and player == 0):
+                text = font.render("You win!", 1, (255,0,0))
+            elif game.win() == -1:
+                text = font.render("Game was a tie.", 1, (255,0,0))
+            else:
+                text = font.render("You lost...", 1, (255,0,0))
+
+            win.blit(text, (width/2 - text.get_width()/2, height/2 - text.get_height()/2))
+            pygame.display.update()
+            pygame.time.delay(2000)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                for btn in btns:
+                    if btn.click(pos) and game.connected():
+                        if player == 0:
+                            if not game.p1Move:
+                                n.send(btn.text)
+                        else:
+                            if not game.p2Move:
+                                n.send(btn.text)
+
+        reDraw(win, game, player)
 
 
-
-        #if both went
-        #winner declaration
+        
+        
         #time delay
         #quit
         #menu screen
